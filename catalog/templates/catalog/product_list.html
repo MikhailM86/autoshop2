@@ -1,18 +1,13 @@
-{% extends "catalog/base.html" %}
+{% extends "base.html" %}
 
 {% block content %}
-<h1 class="mb-4">Каталог запчастей</h1>
 <div class="row">
     {% for product in products %}
     <div class="col-md-4 mb-4">
         <div class="card h-100">
-            {% if product.image %}
-            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: contain;">
-            {% endif %}
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
             <div class="card-body">
                 <h5 class="card-title">{{ product.name }}</h5>
-                <p class="text-muted">Арт. {{ product.part_number }}</p>
-                <p class="fw-bold">{{ product.price }} ₽</p>
                 <a href="{% url 'cart_add' product.id %}" class="btn btn-primary">В корзину</a>
             </div>
         </div>
