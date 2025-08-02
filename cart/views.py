@@ -19,3 +19,15 @@ def cart_view(request):
             'total': product.price * cart[str(product.id)]
         })
     return render(request, 'cart/cart.html', {'cart_items': cart_items})
+
+def cart_remove(request, product_id):
+    """Удаление товара из корзины"""
+    product = get_object_or_404(Product, id=product_id)
+    cart = request.session.get('cart', {})
+    
+    if str(product_id) in cart:
+        del cart[str(product_id)]
+        request.session['cart'] = cart
+        request.session.modified = True
+    
+    return redirect('cart:cart_view')

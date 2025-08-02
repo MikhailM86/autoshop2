@@ -18,6 +18,11 @@
                 <td>{{ item.quantity }}</td>
                 <td>{{ item.product.price }} ₽</td>
                 <td>{{ item.total }} ₽</td>
+                <td>
+                    <a href="{% url 'cart:cart_remove' item.product.id %}" class="btn btn-danger btn-sm">
+                        Удалить
+                    </a>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

@@ -11,7 +11,7 @@
             <p class="text-muted">Артикул: {{ product.part_number }}</p>
             <h3>{{ product.price }} ₽</h3>
             <p>{{ product.description }}</p>
-            <a href="{% url 'cart_add' product.id %}" class="btn btn-primary">В корзину</a>
+            <a href="{% url 'cart:cart_add' product.id %}" class="btn btn-primary">В корзину</a>
         </div>
     </div>
 </div>
