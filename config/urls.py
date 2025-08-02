@@ -26,7 +26,10 @@ urlpatterns = [
     path("", views.product_list, name="product_list"),
     path("product/<int:product_id>/", views.product_detail, name="product_detail"),
     path('cart/', include('cart.urls')),  # Подключаем URLs корзины
+    path('orders/', include('orders.urls')), 
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+

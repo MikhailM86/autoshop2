@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'catalog',
     'cart',
     'users',
+    'orders',
     'crispy_forms',
     'django_bootstrap5',
     'django_cleanup.apps.CleanupConfig',

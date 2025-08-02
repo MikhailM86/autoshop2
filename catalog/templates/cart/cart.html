@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4">Ваша корзина</h1>
+    
+    {% if cart_items %}
+    <div class="table-responsive">
+        <table class="table">
+            <thead class="table-light">
+                <tr>
+                    <th>Товар</th>
+                    <th>Количество</th>
+                    <th>Цена</th>
+                    <th>Итого</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <img src="{{ item.product.image.url }}" 
+                                 alt="{{ item.product.name }}" 
+                                 style="width: 60px; height: 60px; object-fit: cover; margin-right: 15px;">
+                            <div>
+                                <h6 class="mb-0">{{ item.product.name }}</h6>
+                                <small class="text-muted">Арт. {{ item.product.part_number }}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <form action="{% url 'cart_update' item.product.id %}" method="post" class="d-flex">
+                            {% csrf_token %}
+                            <input type="number" 
+                                   name="quantity" 
+                                   value="{{ item.quantity }}" 
+                                   min="1" 
+                                   class="form-control form-control-sm" 
+                                   style="width: 70px;">
+                            <button type="submit" class="btn btn-sm btn-outline-primary ms-2">
+                                <i class="bi bi-arrow-repeat"></i>
+                            </button>
+                        </form>
+                    </td>
+                    <td>{{ item.product.price }} ₽</td>
+                    <td>{{ item.total }} ₽</td>
+                    <td>
+                        <a href="{% url 'cart_remove' item.product.id %}" 
+                           class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <a href="{% url 'product_list' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Продолжить покупки
+            </a>
+        </div>
+        <div class="col-md-6 text-end">
+            <h4 class="mb-3">Общая сумма: <strong>{{ total }} ₽</strong></h4>
+            <a href="{% url 'orders:checkout' %}" class="btn btn-success btn-lg">
+                <i class="bi bi-bag-check"></i> Оформить заказ
+            </a>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="alert alert-info">
+        <div class="d-flex align-items-center">
+            <i class="bi bi-cart-x fs-4 me-3"></i>
+            <div>
+                <h4 class="mb-1">Корзина пуста</h4>
+                <p class="mb-0">Добавьте товары из каталога</p>
+            </div>
+        </div>
+    </div>
+    <a href="{% url 'product_list' %}" class="btn btn-primary mt-3">
+        <i class="bi bi-arrow-left"></i> В каталог
+    </a>
+    {% endif %}
+</div>
+{% endblock %}
