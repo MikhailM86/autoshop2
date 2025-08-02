@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand" href="{% url 'product_list' %}">AutoParts</a>
+        <a class="navbar-brand" href="{% url 'catalog:product_list' %}">AutoParts</a>
         <a href="{% url 'cart_view' %}" class="btn btn-outline-light">
             Корзина <span class="badge bg-danger">{{ cart_items_count }}</span>
         </a>

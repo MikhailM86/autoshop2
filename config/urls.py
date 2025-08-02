@@ -24,7 +24,6 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('catalog.urls')),
-    path("product/<int:product_id>/", views.product_detail, name="product_detail"),
     path('cart/', include('cart.urls')),  # Подключаем URLs корзины
     path('orders/', include('orders.urls')),
 ]
