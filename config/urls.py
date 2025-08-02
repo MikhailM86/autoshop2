@@ -23,13 +23,12 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", views.product_list, name="product_list"),
+    path('', include('catalog.urls')),
     path("product/<int:product_id>/", views.product_detail, name="product_detail"),
     path('cart/', include('cart.urls')),  # Подключаем URLs корзины
-    path('orders/', include('orders.urls')), 
+    path('orders/', include('orders.urls')),
 ]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
