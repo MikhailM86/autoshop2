@@ -1,0 +1,31 @@
+<!-- templates/includes/sidebar.html -->
+<div class="col-md-3 mb-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            Категории
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <a href="{% url 'catalog:product_list' %}">Все товары</a>
+            </li>
+            {% for category in categories %}
+            <li class="list-group-item">
+                <a href="{% url 'catalog:category_detail' category.slug %}">
+                    {{ category.name }} ({{ category.products.count }})
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header bg-info text-white">
+            Фильтры
+        </div>
+        <div class="card-body">
+            <h6>По цене</h6>
+            <input type="range" class="form-range">
+            <button class="btn btn-sm btn-outline-primary mt-2">Применить</button>
+        </div>
+    </div>
+</div>

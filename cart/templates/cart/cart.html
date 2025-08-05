@@ -1,31 +1,86 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block extra_js %}  
+<script src="{% static 'js/cart.js' %}"></script>
+{% endblock %}
+
+{% block extra_head %} 
+<link rel="stylesheet" href="{% static 'css/cart.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="container">
+<div class="container mt-4">
     <h2>Ваша корзина</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Товар</th>
-                <th>Количество</th>
-                <th>Цена</th>
-                <th>Итого</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in cart_items %}
-            <tr>
-                <td>{{ item.product.name }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>{{ item.product.price }} ₽</td>
-                <td>{{ item.total }} ₽</td>
-                <td>
-                    <a href="{% url 'cart:cart_remove' item.product.id %}" class="btn btn-danger btn-sm">
-                        Удалить
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+
+    <form method="post" action="{% url 'cart:cart_update' %}">
+        {% csrf_token %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Товар</th>
+                    <th>Количество</th>
+                    <th>Цена</th>
+                    <th>Итого</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td class="quantity-control">
+                        <div class="input-group" style="width: 120px;">
+                            <button type="button" class="btn btn-outline-secondary minus-btn">-</button>
+                            <input type="number" name="quantity_{{ item.product.id }}" value="{{ item.quantity }}"
+                                min="1" class="form-control text-center quantity-input">
+                            <button type="button" class="btn btn-outline-secondary plus-btn">+</button>
+                        </div>
+                    </td>
+                    <td>{{ item.product.price }} ₽</td>
+                    <td>{{ item.total_price }} ₽</td>
+                    <td>
+                        <a href="{% url 'cart:cart_remove' item.product.id %}" class="btn btn-danger btn-sm">
+                            Удалить
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="text-end">
+            <h4>Общая сумма: <span id="total-price">{{ cart_total }} ₽</span></h4>
+            <button type="submit" class="btn btn-primary">Обновить корзину</button>
+            <a href="{% url 'orders:checkout' %}" class="btn btn-success">Оформить заказ</a>
+        </div>
+    </form>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Обработчики для кнопок +/-
+        document.querySelectorAll('.plus-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const input = this.parentElement.querySelector('.quantity-input');
+                input.value = Math.max(1, (parseInt(input.value) || 0) + 1);
+            });
+        });
+
+        document.querySelectorAll('.minus-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const input = this.parentElement.querySelector('.quantity-input');
+                input.value = Math.max(1, (parseInt(input.value) || 1) - 1);
+            });
+        });
+
+        // Редактирование поля ввода
+        document.querySelectorAll('.quantity-input').forEach(input => {
+            input.addEventListener('change', function () {
+                this.value = Math.max(1, parseInt(this.value) || 1);
+            });
+        });
+    });
+</script>
 {% endblock %}

@@ -1,0 +1,25 @@
+/* Стили для управления количеством */
+.quantity-control .input-group {
+    margin: 0 auto;
+    max-width: 120px;
+}
+
+.quantity-input {
+    -moz-appearance: textfield;
+    text-align: center;
+    width: 40px;
+}
+
+.quantity-input::-webkit-outer-spin-button,
+.quantity-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Кнопки +/- */
+.quantity-btn {
+    width: 30px;
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    cursor: pointer;
+}
