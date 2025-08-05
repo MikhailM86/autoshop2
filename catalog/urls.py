@@ -1,9 +1,11 @@
 from django.urls import path
-from .views import product_list, product_detail
+from . import views
 
-app_name = 'catalog'  # Пространство имён
+app_name = 'catalog'
 
 urlpatterns = [
-    path('', product_list, name='product_list'),  # Главная страница каталога
-    path('product/<int:product_id>/', product_detail, name='product_detail'),  # Детали товара
+    path('', views.product_list, name='product_list'),
+    path('category/<slug:category_slug>/', views.product_list, name='product_list_by_category'),
+    path('brand/<slug:brand_slug>/', views.product_list, name='product_list_by_brand'),
+    path('<int:id>/<slug:slug>/', views.product_detail, name='product_detail'),
 ]

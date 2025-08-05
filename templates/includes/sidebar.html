@@ -1,31 +1,35 @@
 <!-- templates/includes/sidebar.html -->
-<div class="col-md-3 mb-4">
-    <div class="card">
-        <div class="card-header bg-primary text-white">
-            Категории
-        </div>
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item">
-                <a href="{% url 'catalog:product_list' %}">Все товары</a>
-            </li>
-            {% for category in categories %}
-            <li class="list-group-item">
-                <a href="{% url 'catalog:category_detail' category.slug %}">
-                    {{ category.name }} ({{ category.products.count }})
+<div class="sidebar">
+    <!-- Категории -->
+    <h3>Категории</h3>
+    <ul>
+        <li {% if not active_category %}class="active-category"{% endif %}>
+            <a href="{% url 'catalog:product_list' %}">Все товары</a>
+        </li>
+        {% for cat in categories %}
+            <li {% if active_category and active_category.id == cat.id %}class="active-category"{% endif %}>
+                <a href="{% url 'catalog:product_list_by_category' cat.slug %}">
+                    {{ cat.name }} ({{ cat.product_count }})
                 </a>
             </li>
-            {% endfor %}
-        </ul>
-    </div>
+        {% endfor %}
+    </ul>
 
-    <div class="card mt-4">
-        <div class="card-header bg-info text-white">
-            Фильтры
-        </div>
-        <div class="card-body">
-            <h6>По цене</h6>
-            <input type="range" class="form-range">
-            <button class="btn btn-sm btn-outline-primary mt-2">Применить</button>
-        </div>
-    </div>
+    <!-- Бренды -->
+    <h3>Бренды</h3>
+    <ul>
+        <li {% if not active_brand %}class="active-category"{% endif %}>
+            <a href="{% url 'catalog:product_list' %}">Все бренды</a>
+        </li>
+        {% for br in brands %}
+            <li {% if active_brand and active_brand.id == br.id %}class="active-category"{% endif %}>
+                <a href="{% url 'catalog:product_list_by_brand' br.slug %}">
+                    {{ br.name }} ({{ br.product_count }})
+                    {% if br.logo %}
+                        <img src="{{ br.logo.url }}" alt="{{ br.name }}" width="30">
+                    {% endif %}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
 </div>
