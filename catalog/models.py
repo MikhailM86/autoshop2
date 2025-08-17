@@ -35,7 +35,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200, blank=True, unique=True, editable=False) 
+    slug = models.SlugField(max_length=200, blank=True, unique=True)
     part_number = models.CharField(max_length=50)  # Уникальный артикул
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField(default=0)
@@ -57,21 +57,14 @@ class Product(models.Model):
     def __str__(self):
         return f"{self.brand.name} {self.name}" if self.brand else self.name
 
-
-def save(self, *args, **kwargs):
-    if not self.slug or self.slug == '':  # Явно проверяем пустую строку
-        base_slug = slugify(self.name)
-        self.slug = base_slug
-        counter = 1
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+            counter = 1
         while Product.objects.filter(slug=self.slug).exclude(id=self.id).exists():
-            self.slug = f"{base_slug}-{counter}"
+            self.slug = f"{slugify(self.name)}-{counter}"
             counter += 1
-    super().save(*args, **kwargs)
-
-
-def clean(self):
-    if not self.slug or not self.slug.strip():
-        raise ValidationError("Slug не может быть пустым")
+        super().save(*args, **kwargs)
 
 
 def get_absolute_url(self):
