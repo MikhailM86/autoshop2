@@ -42,8 +42,11 @@ def product_list(request, category_slug=None, brand_slug=None):
     
     return render(request, 'catalog/product_list.html', context)
 
-def product_detail(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+def product_detail(request, id, slug):
+    product = get_object_or_404(Product, id=id)
+    if product.slug != slug:  # Если slug в URL не совпадает с текущим
+        from django.shortcuts import redirect
+        return redirect('catalog:product_detail', id=id, slug=product.slug)
     context = {
         'product': product,
         'title': f'{product.name} - Детали'

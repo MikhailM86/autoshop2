@@ -5,6 +5,8 @@ from django.dispatch import receiver
 import os
 from django.utils.text import slugify
 from django.urls import reverse
+from django.core.exceptions import ValidationError
+from django.conf import settings
 
 
 class Brand(models.Model):
@@ -33,30 +35,49 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200, unique=True, blank=True)
+    slug = models.SlugField(max_length=200, blank=True, unique=True, editable=False) 
     part_number = models.CharField(max_length=50)  # Уникальный артикул
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField(default=0)
     description = models.TextField(blank=True, null=True, default='')
-    image = models.ImageField(upload_to="products/", blank=True,
-                              null=True, default='images/products/default.png')
+    image = models.ImageField(
+        upload_to="products/",
+        blank=True,
+        null=True
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     specs = models.CharField(blank=True, null=True, default='')
+
+    @property
+    def image_url(self):
+        if self.image and hasattr(self.image, 'url'):
+            return self.image.url
+        return f"{settings.STATIC_URL}images/products/default.png"
 
     def __str__(self):
         return f"{self.brand.name} {self.name}" if self.brand else self.name
 
+
 def save(self, *args, **kwargs):
-    if not self.slug:
-        self.slug = orig = slugify(self.name)
+    if not self.slug or self.slug == '':  # Явно проверяем пустую строку
+        base_slug = slugify(self.name)
+        self.slug = base_slug
         counter = 1
-        while Product.objects.filter(slug=self.slug).exists():
-            self.slug = f"{orig}-{counter}"
+        while Product.objects.filter(slug=self.slug).exclude(id=self.id).exists():
+            self.slug = f"{base_slug}-{counter}"
             counter += 1
     super().save(*args, **kwargs)
 
+
+def clean(self):
+    if not self.slug or not self.slug.strip():
+        raise ValidationError("Slug не может быть пустым")
+
+
 def get_absolute_url(self):
-        return reverse('product_detail', args=[self.id, self.slug])
+    if not self.slug:  # Если slug ещё не создан
+        self.save()    # Вызовет метод save() для генерации slug
+    return reverse('product_detail', args=[self.id, self.slug])
 
 # Сигналы для работы с файлами
 
